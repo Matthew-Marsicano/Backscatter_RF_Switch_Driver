@@ -1,0 +1,72 @@
+rm -f results.xml
+"make" -f Makefile results.xml
+make[1]: Entering directory '/home/mattm/work/BackscatterRadioBaseband/test'
+mkdir -p sim_build/rtl
+/usr/bin/iverilog -o sim_build/rtl/sim.vvp -s tb -g2012 -I../src -f sim_build/rtl/cmds.f  ../src/tt_um_ble_backscatter_modem.v ../src/ble_modem_top.v ../src/sync_reset.v ../src/spi_slave.v ../src/config_regs.v ../src/payload_fifo.v ../src/pdu_assembler.v ../src/packet_fsm.v ../src/crc24.v ../src/whitening_lfsr.v ../src/symbol_timing.v ../src/phase_generator.v ../src/modulator.v tb.v
+rm -f results.xml
+COCOTB_TEST_MODULES=test COCOTB_TESTCASE= COCOTB_TEST_FILTER= COCOTB_TOPLEVEL=tb TOPLEVEL_LANG=verilog \
+         /usr/bin/vvp -M /usr/local/lib/python3.10/dist-packages/cocotb/libs -m libcocotbvpi_icarus   sim_build/rtl/sim.vvp -fst  
+     -.--ns INFO     gpi                                ..mbed/gpi_embed.cpp:93   in _embed_init_python              Using Python 3.10.14 interpreter at /usr/bin/python3
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:79   in gpi_print_registered_impl       VPI registered
+     0.00ns INFO     cocotb                             Running on Icarus Verilog version 11.0 (stable)
+     0.00ns WARNING  gpi                                vpi_iterate returned NULL for type vpiInstance for object NULL
+     0.00ns INFO     cocotb                             Seeding Python random module with 1784785685
+     0.00ns INFO     cocotb                             Initialized cocotb v2.0.1 from /usr/local/lib/python3.10/dist-packages/cocotb
+     0.00ns INFO     cocotb                             Running tests
+     0.00ns INFO     cocotb.regression                  running test.test_reset_and_idle (1/10)
+                                                            V-1: Reset and idle safe state check.
+   464.00ns INFO     cocotb.tb                          Reset safe state verified.
+   464.00ns INFO     cocotb.regression                  test.test_reset_and_idle passed
+   464.00ns INFO     cocotb.regression                  running test.test_spi_config_readwrite (2/10)
+                                                            V-1: Verify SPI configuration register read/write operations.
+ 20528.00ns INFO     cocotb.tb                          SPI config register R/W verified.
+ 20528.00ns INFO     cocotb.regression                  test.test_spi_config_readwrite passed
+ 20528.00ns INFO     cocotb.regression                  running test.test_packet_transmission_ch37 (3/10)
+                                                            V-2, V-3: Channel 37 full packet & golden model bit matching.
+156464.00ns INFO     cocotb.tb                          Channel 37 bitstream matched golden model!
+156464.00ns INFO     cocotb.regression                  test.test_packet_transmission_ch37 passed
+156464.00ns INFO     cocotb.regression                  running test.test_packet_transmission_ch38 (4/10)
+                                                            V-3: Channel 38 whitening test.
+272944.00ns INFO     cocotb.tb                          Channel 38 transmission verified!
+272944.00ns INFO     cocotb.regression                  test.test_packet_transmission_ch38 passed
+272944.00ns INFO     cocotb.regression                  running test.test_ssb_4phase_modulation (5/10)
+                                                            V-6: SSB 4-phase switch control lines rotation.
+292144.00ns INFO     cocotb.tb                          SSB 4-phase rotation verified.
+292144.00ns INFO     cocotb.regression                  test.test_ssb_4phase_modulation passed
+292144.00ns INFO     cocotb.regression                  running test.test_dsb_fsk_modulation (6/10)
+                                                            V-6: DSB-FSK complementary outputs.
+310544.01ns INFO     cocotb.tb                          DSB-FSK complementary output verified.
+310544.01ns INFO     cocotb.regression                  test.test_dsb_fsk_modulation passed
+310544.01ns INFO     cocotb.regression                  running test.test_payload_fifo_backpressure (7/10)
+                                                            §2/§11, FR-29: FIFO underrun stalls symbol timing (run=0) rather than
+497200.01ns INFO     cocotb.tb                          Payload FIFO backpressure/stall-and-resume verified.
+497200.01ns INFO     cocotb.regression                  test.test_payload_fifo_backpressure passed
+497200.01ns INFO     cocotb.regression                  running test.test_repeat_transmission (8/10)
+                                                            FR-23..25: repeat_en re-arms straight back into TX_PREAMBLE after DONE;
+776016.01ns INFO     cocotb.tb                          Repeat transmission (2 back-to-back iterations) verified; stopped cleanly.
+776016.01ns INFO     cocotb.regression                  test.test_repeat_transmission passed
+776016.01ns INFO     cocotb.regression                  running test.test_max_payload_length (9/10)
+                                                            FR-29, §2: full MAX_PAYLOAD_BYTES=37 payload streams correctly even
+1174416.01ns INFO     cocotb.tb                          Max payload length (37 bytes) verified against golden model.
+1174416.01ns INFO     cocotb.regression                  test.test_max_payload_length passed
+1174416.01ns INFO     cocotb.regression                  running test.test_reset_mid_transmission (10/10)
+                                                             V-1: an async reset asserted mid-packet drops straight back to the safe
+1403520.01ns INFO     cocotb.tb                          Mid-transmission async reset verified: safe idle state + clean subsequent TX.
+1403520.01ns INFO     cocotb.regression                  test.test_reset_mid_transmission passed
+1403520.01ns INFO     cocotb.regression                  *********************************************************************************************
+                                                         ** TEST                                 STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
+                                                         *********************************************************************************************
+                                                         ** test.test_reset_and_idle              PASS         464.00           0.01      71206.95  **
+                                                         ** test.test_spi_config_readwrite        PASS       20064.00           0.23      88459.76  **
+                                                         ** test.test_packet_transmission_ch37    PASS      135936.00           1.70      80195.50  **
+                                                         ** test.test_packet_transmission_ch38    PASS      116480.00           1.53      75959.77  **
+                                                         ** test.test_ssb_4phase_modulation       PASS       19200.00           0.20      93670.01  **
+                                                         ** test.test_dsb_fsk_modulation          PASS       18400.00           0.21      89558.75  **
+                                                         ** test.test_payload_fifo_backpressure   PASS      186656.00           2.66      70234.74  **
+                                                         ** test.test_repeat_transmission         PASS      278816.00           3.67      76042.41  **
+                                                         ** test.test_max_payload_length          PASS      398400.00           5.88      67807.34  **
+                                                         ** test.test_reset_mid_transmission      PASS      229104.00           2.89      79216.52  **
+                                                         *********************************************************************************************
+                                                         ** TESTS=10 PASS=10 FAIL=0 SKIP=0                 1403520.01          18.99      73903.34  **
+                                                         *********************************************************************************************
+make[1]: Leaving directory '/home/mattm/work/BackscatterRadioBaseband/test'
