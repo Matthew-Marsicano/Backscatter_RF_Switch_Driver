@@ -14,16 +14,16 @@
 ## Derived Clock Divider Math
 
 1. **Symbol Divider (`SYMBOL_DIV`)**:
-   $$\text{SYMBOL\_DIV} = \frac{\text{CLK\_FREQ\_HZ}}{\text{SYMBOL\_RATE\_HZ}} = \frac{64,000,000}{1,000,000} = 64$$
+   `SYMBOL_DIV = CLK_FREQ_HZ / SYMBOL_RATE_HZ = 64,000,000 / 1,000,000` = **64**
    Yields exact 1.000 Mbit/s symbol timing with 0% error.
 
 2. **SSB Phase Divider (`PHASE_DIV`)**:
-   $$\text{PHASE\_DIV} = \frac{\text{CLK\_FREQ\_HZ}}{\text{PHASE\_COUNT} \times \text{F\_SWITCH\_HZ}} = \frac{64,000,000}{4 \times 16,000,000} = 1$$
+   `PHASE_DIV = CLK_FREQ_HZ / (PHASE_COUNT × F_SWITCH_HZ) = 64,000,000 / (4 × 16,000,000)` = **1**
    Phasor rotates by 90° every 1 system clock cycle, creating four 90°-spaced phase outputs at 16 MHz.
 
 3. **DSB FSK Dividers (`FSK_DIV0`, `FSK_DIV1`)**:
-   $$\text{FSK\_DIV0} = \frac{64,000,000}{2 \times 16,000,000} = 2 \implies \text{reload} = 1$$
-   $$\text{FSK\_DIV1} = \text{FSK\_DIV0} + 1 = 3 \implies \text{reload} = 2$$
+   `FSK_DIV0 = 64,000,000 / (2 × 16,000,000)` = **2** → reload = 1
+   `FSK_DIV1 = FSK_DIV0 + 1` = **3** → reload = 2
 
 ---
 
