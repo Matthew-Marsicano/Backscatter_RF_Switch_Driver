@@ -239,6 +239,52 @@ async def test_dsb_fsk_modulation(dut):
 
 
 @cocotb.test()
+async def test_config_b_phase_select(dut):
+    """FR-18..22: SPI PHASE_CFG (0x04) bit 0 selects Config A vs Config B DSB
+    switching dividers at runtime via modulator.v's cfg_phase_sel mux. Config A
+    keys between FSK_DIV0_A/FSK_DIV1_A = 2/3 clk cycles per toggle; Config B
+    keys between FSK_DIV0_B/FSK_DIV1_B = 1/2 -- faster and numerically distinct
+    from Config A, so measuring the actual toggle periods proves the mux (not
+    just the register bit) took effect."""
+    await setup_dut(dut)
+    payload = [0xFF]
+    await spi_write(dut, A_CHAN, 37)
+    await spi_write(dut, A_LEN, len(payload))
+    await spi_write(dut, A_HDR, 0x02)
+    await spi_stream_payload(dut, payload)
+    await spi_write(dut, A_CTRL, 0x01)  # mode_sel=0 (DSB), trigger tx_start
+    await ClockCycles(dut.clk, 50)
+    assert (int(dut.uo_out.value) & 0x10) != 0, "tx_active should be high"
+
+    async def _measure_toggle_periods(n_cycles):
+        periods = []
+        prev_bit = int(dut.uo_out.value) & 1
+        last_edge = 0
+        for cycle in range(1, n_cycles + 1):
+            await ClockCycles(dut.clk, 1)
+            bit = int(dut.uo_out.value) & 1
+            if bit != prev_bit:
+                periods.append(cycle - last_edge)
+                last_edge = cycle
+                prev_bit = bit
+        return periods
+
+    periods_a = await _measure_toggle_periods(400)
+    assert periods_a, "No DSB toggling observed for Config A"
+    assert set(periods_a) <= {2, 3}, f"Config A periods out of range: {sorted(set(periods_a))}"
+
+    await spi_write(dut, A_PHASE, 0x01)  # switch to Config B mid-transmission
+
+    periods_b = await _measure_toggle_periods(400)
+    assert periods_b, "No DSB toggling observed for Config B"
+    assert set(periods_b) <= {1, 2}, f"Config B periods out of range: {sorted(set(periods_b))}"
+    assert max(periods_b) < max(periods_a), "Config B should switch faster than Config A"
+    dut._log.info(
+        f"Config A periods {sorted(set(periods_a))}, Config B periods {sorted(set(periods_b))} verified."
+    )
+
+
+@cocotb.test()
 async def test_payload_fifo_backpressure(dut):
     """§2/§11, FR-29: FIFO underrun stalls symbol timing (run=0) rather than
     emitting garbage, and transmission resumes correctly once more payload

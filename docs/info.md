@@ -32,6 +32,8 @@ SPI -->|  [SPI Slave] -> [Config Regs] -> [Payload FIFO]          |
 2. **Mode 0 — DSB-FSK (Baseline)**:
    Drives a single switch control line (`phase_ctrl[0]`, with its complement on `phase_ctrl[1]`) with a square wave whose frequency keys between two values based on the data bit value. Reflected energy appears at carrier ± `f_switch` (double sideband).
 
+`mode_sel` (waveform shape: SSB vs DSB-FSK) and `PHASE_CFG[0]` (Config A vs Config B divider set) are independent, runtime-switchable controls — see `modulator.v`. Config A is the SSB-at-16-MHz / DSB-FSK-keyed-16-MHz⁄10.67-MHz default; Config B keeps the SSB rate (already at the fastest divider this clock supports) but switches DSB-FSK to key between 32 MHz and 16 MHz (~24 MHz center — the nearest achievable pair, since 64 MHz has no exact integer divider for 2×24 MHz).
+
 ---
 
 ## Pinout Map
@@ -62,7 +64,7 @@ SPI -->|  [SPI Slave] -> [Config Regs] -> [Payload FIFO]          |
 | `0x01` | `STATUS` | RO | `[0]` `busy`, `[1]` `done`, `[2]` `fifo_full` |
 | `0x02` | `CHAN` | RW | `[5:0]` Channel Index (0..39, default 37) |
 | `0x03` | `LEN` | RW | `[7:0]` Payload Length in bytes (0..37) |
-| `0x04` | `PHASE_CFG` | RW | `[1:0]` Phase count / divider configuration |
+| `0x04` | `PHASE_CFG` | RW | `[0]` Config A/B select (0=Config A, default; 1=Config B), `[1]` reserved |
 | `0x05` | `PDU_HDR` | RW | `[7:0]` Header byte 0 (PDU Type & Flag bits) |
 | `0x08`+ | `PAYLOAD` | WO | Streaming payload byte FIFO write port |
 

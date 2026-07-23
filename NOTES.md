@@ -129,3 +129,35 @@ It rsyncs `src/`, `test/`, and `docs/` (excluding `.git`, `sim_build`, waveform 
 `~/work/BackscatterRadioBaseband` inside WSL, then runs `make` there. Edit source files here
 on the Windows/OneDrive side as usual — the script re-syncs on every invocation, so there's
 nothing to keep manually in sync.
+
+---
+
+## Config A / Config B Runtime Switch (2026-07-23)
+
+`PHASE_CFG` (SPI reg `0x04`) was a dead register — written and read back but never wired to
+anything. It's now a real runtime switch: `PHASE_CFG[0]` selects between two precomputed
+divider profiles in [modulator.v](src/modulator.v), independent of `mode_sel` (DSB vs SSB
+waveform shape):
+
+- **Config A** (`PHASE_CFG[0]=0`, default, unchanged from before this change): SSB @ 16 MHz;
+  DSB-FSK keyed between 16 MHz / 10.67 MHz (`FSK_DIV0_A=2` / `FSK_DIV1_A=3`).
+- **Config B** (`PHASE_CFG[0]=1`): SSB rate unchanged — `PHASE_DIV` is already the fastest
+  divider a 64 MHz clock supports for 4-phase SSB, so there's no faster SSB point to switch to.
+  DSB-FSK keys between 32 MHz / 16 MHz (`FSK_DIV0_B=1` / `FSK_DIV1_B=2`) instead, centered
+  ~24 MHz. Exact 24 MHz isn't achievable — 64 MHz has no integer divider for 2×24 MHz — so this
+  is the nearest achievable FSK pair, not a single fixed tone.
+
+`ble_modem_top.v` computes both `_A` and `_B` localparam sets from the same `CLK_FREQ_HZ` /
+`F_SWITCH_HZ` / `PHASE_COUNT` parameters as before; `modulator.v` muxes between them
+combinationally on `cfg_phase_sel[0]` rather than picking one set at elaboration time.
+`cfg_phase_sel[1]` is reserved (not decoded).
+
+**Verification**: `test_config_b_phase_select` in [test.py](test/test.py) measures actual
+`phase_ctrl[0]` toggle periods in clk cycles under both settings — Config A must produce only
+{2, 3}-cycle periods, Config B only {1, 2}-cycle periods, and Config B's must be strictly
+faster. This confirms the mux changed real switching behavior, not just that the register bit
+was writable. All 11 tests pass (`test_out.log`).
+
+**Area cost**: negligible against the ~32% free headroom measured on the 1×2 tile (see the
+gds-run area analysis) — this adds a handful of muxes and two extra constant divider sets, not
+new storage or datapath width.

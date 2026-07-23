@@ -49,10 +49,21 @@ module ble_modem_top #(
 
   // ---- Calculated Dividers ----
   localparam integer SYMBOL_DIV = CLK_FREQ_HZ / SYMBOL_RATE_HZ;
-  localparam integer PHASE_DIV  = CLK_FREQ_HZ / (PHASE_COUNT * F_SWITCH_HZ);
-  localparam integer FSK_DIV0   = (CLK_FREQ_HZ / (2 * F_SWITCH_HZ)) > 0 ? (CLK_FREQ_HZ / (2 * F_SWITCH_HZ)) : 1;
-  localparam integer FSK_DIV1   = FSK_DIV0 + 1;
   localparam integer PW         = (PHASE_COUNT <= 2) ? 1 : ((PHASE_COUNT <= 4) ? 2 : 3);
+
+  // Config A (default): SSB @ F_SWITCH_HZ (16 MHz); DSB keyed around F_SWITCH_HZ.
+  localparam integer PHASE_DIV_A = CLK_FREQ_HZ / (PHASE_COUNT * F_SWITCH_HZ);
+  localparam integer FSK_DIV0_A  = (CLK_FREQ_HZ / (2 * F_SWITCH_HZ)) > 0 ? (CLK_FREQ_HZ / (2 * F_SWITCH_HZ)) : 1;
+  localparam integer FSK_DIV1_A  = FSK_DIV0_A + 1;
+
+  // Config B (host-selectable via SPI PHASE_CFG reg 0x04, bit 0): SSB unchanged
+  // (PHASE_DIV_A is already the fastest achievable divider from this clock);
+  // DSB keyed between the two fastest achievable tones (32 MHz / 16 MHz from a
+  // 64 MHz clock), centered ~24 MHz -- 64 MHz has no exact integer divider for
+  // 2*24 MHz.
+  localparam integer PHASE_DIV_B = PHASE_DIV_A;
+  localparam integer FSK_DIV0_B  = 1;
+  localparam integer FSK_DIV1_B  = 2;
 
   // ---- Build-time parameter assertions (FR-3 checks) ----
   initial begin
@@ -228,16 +239,20 @@ module ble_modem_top #(
   modulator #(
       .PHASE_COUNT(PHASE_COUNT),
       .PW         (PW),
-      .PHASE_DIV  (PHASE_DIV),
-      .FSK_DIV0   (FSK_DIV0),
-      .FSK_DIV1   (FSK_DIV1)
+      .PHASE_DIV_A(PHASE_DIV_A),
+      .FSK_DIV0_A (FSK_DIV0_A),
+      .FSK_DIV1_A (FSK_DIV1_A),
+      .PHASE_DIV_B(PHASE_DIV_B),
+      .FSK_DIV0_B (FSK_DIV0_B),
+      .FSK_DIV1_B (FSK_DIV1_B)
   ) u_mod (
-      .clk       (clk),
-      .rst_n     (rst_sync_n),
-      .active    (tx_active_int),
-      .mode_ssb  (effective_mode_sel),
-      .data_bit  (data_bit),
-      .phase_ctrl(phase_ctrl)
+      .clk           (clk),
+      .rst_n         (rst_sync_n),
+      .active        (tx_active_int),
+      .mode_ssb      (effective_mode_sel),
+      .cfg_phase_sel (cfg_phase_sel),
+      .data_bit      (data_bit),
+      .phase_ctrl    (phase_ctrl)
   );
 
   // ---- Output Assignments ----

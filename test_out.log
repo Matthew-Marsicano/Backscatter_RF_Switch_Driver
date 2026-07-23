@@ -10,63 +10,68 @@ COCOTB_TEST_MODULES=test COCOTB_TESTCASE= COCOTB_TEST_FILTER= COCOTB_TOPLEVEL=tb
      -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:79   in gpi_print_registered_impl       VPI registered
      0.00ns INFO     cocotb                             Running on Icarus Verilog version 11.0 (stable)
      0.00ns WARNING  gpi                                vpi_iterate returned NULL for type vpiInstance for object NULL
-     0.00ns INFO     cocotb                             Seeding Python random module with 1784785685
+     0.00ns INFO     cocotb                             Seeding Python random module with 1784790539
      0.00ns INFO     cocotb                             Initialized cocotb v2.0.1 from /usr/local/lib/python3.10/dist-packages/cocotb
      0.00ns INFO     cocotb                             Running tests
-     0.00ns INFO     cocotb.regression                  running test.test_reset_and_idle (1/10)
+     0.00ns INFO     cocotb.regression                  running test.test_reset_and_idle (1/11)
                                                             V-1: Reset and idle safe state check.
    464.00ns INFO     cocotb.tb                          Reset safe state verified.
    464.00ns INFO     cocotb.regression                  test.test_reset_and_idle passed
-   464.00ns INFO     cocotb.regression                  running test.test_spi_config_readwrite (2/10)
+   464.00ns INFO     cocotb.regression                  running test.test_spi_config_readwrite (2/11)
                                                             V-1: Verify SPI configuration register read/write operations.
  20528.00ns INFO     cocotb.tb                          SPI config register R/W verified.
  20528.00ns INFO     cocotb.regression                  test.test_spi_config_readwrite passed
- 20528.00ns INFO     cocotb.regression                  running test.test_packet_transmission_ch37 (3/10)
+ 20528.00ns INFO     cocotb.regression                  running test.test_packet_transmission_ch37 (3/11)
                                                             V-2, V-3: Channel 37 full packet & golden model bit matching.
 156464.00ns INFO     cocotb.tb                          Channel 37 bitstream matched golden model!
 156464.00ns INFO     cocotb.regression                  test.test_packet_transmission_ch37 passed
-156464.00ns INFO     cocotb.regression                  running test.test_packet_transmission_ch38 (4/10)
+156464.00ns INFO     cocotb.regression                  running test.test_packet_transmission_ch38 (4/11)
                                                             V-3: Channel 38 whitening test.
 272944.00ns INFO     cocotb.tb                          Channel 38 transmission verified!
 272944.00ns INFO     cocotb.regression                  test.test_packet_transmission_ch38 passed
-272944.00ns INFO     cocotb.regression                  running test.test_ssb_4phase_modulation (5/10)
+272944.00ns INFO     cocotb.regression                  running test.test_ssb_4phase_modulation (5/11)
                                                             V-6: SSB 4-phase switch control lines rotation.
 292144.00ns INFO     cocotb.tb                          SSB 4-phase rotation verified.
 292144.00ns INFO     cocotb.regression                  test.test_ssb_4phase_modulation passed
-292144.00ns INFO     cocotb.regression                  running test.test_dsb_fsk_modulation (6/10)
+292144.00ns INFO     cocotb.regression                  running test.test_dsb_fsk_modulation (6/11)
                                                             V-6: DSB-FSK complementary outputs.
 310544.01ns INFO     cocotb.tb                          DSB-FSK complementary output verified.
 310544.01ns INFO     cocotb.regression                  test.test_dsb_fsk_modulation passed
-310544.01ns INFO     cocotb.regression                  running test.test_payload_fifo_backpressure (7/10)
+310544.01ns INFO     cocotb.regression                  running test.test_config_b_phase_select (7/11)
+                                                            FR-18..22: SPI PHASE_CFG (0x04) bit 0 selects Config A vs Config B DSB
+344208.01ns INFO     cocotb.tb                          Config A periods [2, 3], Config B periods [1, 2] verified.
+344208.01ns INFO     cocotb.regression                  test.test_config_b_phase_select passed
+344208.01ns INFO     cocotb.regression                  running test.test_payload_fifo_backpressure (8/11)
                                                             §2/§11, FR-29: FIFO underrun stalls symbol timing (run=0) rather than
-497200.01ns INFO     cocotb.tb                          Payload FIFO backpressure/stall-and-resume verified.
-497200.01ns INFO     cocotb.regression                  test.test_payload_fifo_backpressure passed
-497200.01ns INFO     cocotb.regression                  running test.test_repeat_transmission (8/10)
+530864.01ns INFO     cocotb.tb                          Payload FIFO backpressure/stall-and-resume verified.
+530864.01ns INFO     cocotb.regression                  test.test_payload_fifo_backpressure passed
+530864.01ns INFO     cocotb.regression                  running test.test_repeat_transmission (9/11)
                                                             FR-23..25: repeat_en re-arms straight back into TX_PREAMBLE after DONE;
-776016.01ns INFO     cocotb.tb                          Repeat transmission (2 back-to-back iterations) verified; stopped cleanly.
-776016.01ns INFO     cocotb.regression                  test.test_repeat_transmission passed
-776016.01ns INFO     cocotb.regression                  running test.test_max_payload_length (9/10)
+809680.01ns INFO     cocotb.tb                          Repeat transmission (2 back-to-back iterations) verified; stopped cleanly.
+809680.01ns INFO     cocotb.regression                  test.test_repeat_transmission passed
+809680.01ns INFO     cocotb.regression                  running test.test_max_payload_length (10/11)
                                                             FR-29, §2: full MAX_PAYLOAD_BYTES=37 payload streams correctly even
-1174416.01ns INFO     cocotb.tb                          Max payload length (37 bytes) verified against golden model.
-1174416.01ns INFO     cocotb.regression                  test.test_max_payload_length passed
-1174416.01ns INFO     cocotb.regression                  running test.test_reset_mid_transmission (10/10)
+1208080.01ns INFO     cocotb.tb                          Max payload length (37 bytes) verified against golden model.
+1208080.01ns INFO     cocotb.regression                  test.test_max_payload_length passed
+1208080.01ns INFO     cocotb.regression                  running test.test_reset_mid_transmission (11/11)
                                                              V-1: an async reset asserted mid-packet drops straight back to the safe
-1403520.01ns INFO     cocotb.tb                          Mid-transmission async reset verified: safe idle state + clean subsequent TX.
-1403520.01ns INFO     cocotb.regression                  test.test_reset_mid_transmission passed
-1403520.01ns INFO     cocotb.regression                  *********************************************************************************************
+1437184.01ns INFO     cocotb.tb                          Mid-transmission async reset verified: safe idle state + clean subsequent TX.
+1437184.01ns INFO     cocotb.regression                  test.test_reset_mid_transmission passed
+1437184.01ns INFO     cocotb.regression                  *********************************************************************************************
                                                          ** TEST                                 STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
                                                          *********************************************************************************************
-                                                         ** test.test_reset_and_idle              PASS         464.00           0.01      71206.95  **
-                                                         ** test.test_spi_config_readwrite        PASS       20064.00           0.23      88459.76  **
-                                                         ** test.test_packet_transmission_ch37    PASS      135936.00           1.70      80195.50  **
-                                                         ** test.test_packet_transmission_ch38    PASS      116480.00           1.53      75959.77  **
-                                                         ** test.test_ssb_4phase_modulation       PASS       19200.00           0.20      93670.01  **
-                                                         ** test.test_dsb_fsk_modulation          PASS       18400.00           0.21      89558.75  **
-                                                         ** test.test_payload_fifo_backpressure   PASS      186656.00           2.66      70234.74  **
-                                                         ** test.test_repeat_transmission         PASS      278816.00           3.67      76042.41  **
-                                                         ** test.test_max_payload_length          PASS      398400.00           5.88      67807.34  **
-                                                         ** test.test_reset_mid_transmission      PASS      229104.00           2.89      79216.52  **
+                                                         ** test.test_reset_and_idle              PASS         464.00           0.01      64817.89  **
+                                                         ** test.test_spi_config_readwrite        PASS       20064.00           0.29      68494.54  **
+                                                         ** test.test_packet_transmission_ch37    PASS      135936.00           2.30      59208.85  **
+                                                         ** test.test_packet_transmission_ch38    PASS      116480.00           1.80      64542.87  **
+                                                         ** test.test_ssb_4phase_modulation       PASS       19200.00           0.27      69970.79  **
+                                                         ** test.test_dsb_fsk_modulation          PASS       18400.00           0.24      75110.48  **
+                                                         ** test.test_config_b_phase_select       PASS       33664.00           0.53      64019.38  **
+                                                         ** test.test_payload_fifo_backpressure   PASS      186656.00           3.26      57272.82  **
+                                                         ** test.test_repeat_transmission         PASS      278816.00           4.64      60091.16  **
+                                                         ** test.test_max_payload_length          PASS      398400.00           7.48      53292.75  **
+                                                         ** test.test_reset_mid_transmission      PASS      229104.00           3.60      63628.63  **
                                                          *********************************************************************************************
-                                                         ** TESTS=10 PASS=10 FAIL=0 SKIP=0                 1403520.01          18.99      73903.34  **
+                                                         ** TESTS=11 PASS=11 FAIL=0 SKIP=0                 1437184.01          24.46      58756.17  **
                                                          *********************************************************************************************
 make[1]: Leaving directory '/home/mattm/work/BackscatterRadioBaseband/test'
